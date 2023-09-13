@@ -1,7 +1,7 @@
-# COURTESY OF ALEXCHEE
-
 import speech_recognition as sr
 import time
+
+
 
 r = sr.Recognizer()
 r.energy_threshold = 100

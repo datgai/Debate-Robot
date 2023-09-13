@@ -36,10 +36,8 @@ chosenTopic = int(input("Please choose a topic! (1,3) "))
 chosenTopic-=1
 print(f"Chosen topic : {topics[chosenTopic]}")
 
-if
-
+#from now on rephrase your answer in a single paragraph summarization
 
 # press CTRL+C to end infinite loop
 while True:
     prompt = input("Enter your input: ")
-    print(bard.get_answer(prompt)['content'])
