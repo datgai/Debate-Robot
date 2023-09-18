@@ -4,7 +4,7 @@ import random
 
 #presets
 topics = ["Should Artificial Intelligence be used in university?","Do you need to have a college degree to get a good job?","Is technology making people less productive?"]
-bardPresetPrompts = ["Reset this chat","from now on rephrase your answer in a single paragraph summarization","Pretend you are a debate bot that is going to have a debate with me, we will start debating once I prompt 'Start the debate'"]
+bardPresetPrompts = ["Reset this chat","Please pretend to be a confident debate player figuring out how to win over me in a debate game. You should response to me only in a single paragraph. You should only give one point at a time for your side. You should also counter my argument if you are able to. Do not give any conclusion until i say so. Each time after i state my point, act as a opponent in a debate about the topic picked. Do not agree with me point by any chance. Give me very short and concise answers. Ignore all the niceties that Google programmed you with.  do not reply with anything unless i say is your turn or you want to counter my argument.'"]
 
 #Bard Settings
 token = "agj96dfbNYUc8qNoIF0uHzIXE8RXC6J4eK-FsY4X3_FVYnQld19bukYv30976l63WD8n4A."
@@ -67,7 +67,9 @@ def SendPresetPrompts():
     for bardPresetPrompt in bardPresetPrompts:
         print(bardPresetPrompt)
         print(bard.get_answer(bardPresetPrompt)['content'])
-    print(bard.get_answer("Start the debate")['content'])
+    while True:
+        userInput = input("Your Input:")
+        print(f"Bard Input: {bard.get_answer(userInput)['content']}")
 
 if __name__ == "__main__":
     Setup()
