@@ -34,11 +34,13 @@ def Setup():
         try:
             startInput = SpeechRecognition()
         except Exception:
+            print("ERROR LOOP")
             continue
 
         if startInput.upper() in ["Y","YES"]:
             break
         else:
+            print("ERROR LOOP")
             continue
 
     SelectTopic()
@@ -68,6 +70,7 @@ def SelectTopic():
             break
         except Exception as e:
             print(e)
+            print("ERROR LOOP")
             continue
 
 def SelectSides():
@@ -91,6 +94,7 @@ def SelectSides():
             bardPresetPrompts.append(random.choice([f"I would be debating in favour of, and you will be debating against", f"I would be debating against, and you will be debating in favour of"]))
         else:
             print("Please pick a number between 1 and 3!")
+            print("ERROR LOOP")
             continue
         break
 
@@ -107,20 +111,26 @@ def PromptLoop():
 
 def SpeechRecognition():
     r = sr.Recognizer()
-    r.energy_threshold = 1500
+    r.energy_threshold = 1800
 
-    with sr.Microphone() as source:
-        #r.adjust_for_ambient_noise(source)
-        print("Say something!")
-        audio = r.listen(source)
+    while True:
+        with sr.Microphone() as source:
+            #r.adjust_for_ambient_noise(source)
+            print("Say something!")
+            audio = r.listen(source)
 
-    try:
-        print(f"User input: {r.recognize_google(audio)}")
-        return r.recognize_google(audio)
-    except sr.UnknownValueError:
-        raise ("Google Speech Recognition could not understand audio")
-    except sr.RequestError as e:
-        raise ("Could not request results from Google Speech Recognition service; {0}".format(e))
+
+        try:
+            print(f"User input: {r.recognize_google(audio)}")
+            return r.recognize_google(audio)
+            break
+        except sr.UnknownValueError:
+            print("Google Speech Recognition could not understand audio")
+            print("ERROR LOOP")
+            continue
+        except sr.RequestError as e:
+            raise ("Could not request results from Google Speech Recognition service; {0}".format(e))
+
 
 def ConvertSelectionToInt(selection):
     '''helper function to convert to int'''
