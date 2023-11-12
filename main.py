@@ -25,26 +25,27 @@ session.headers = {
 
 session.cookies.set("__Secure-1PSID", token)
 bard = Bard(token=token, session=session, timeout=30)
+engine = pyttsx3.init()
+
 
 def Setup():
     '''kinda the main function'''
     while True:
-        print("Hi! I am XXX! Would you like to debate with me? (Type 'yes') ")
+        TTSAndPrint("Hi! I am XXX! Would you like to debate with me? (say 'yes')")
         try:
             startInput = SpeechRecognition()
+            if startInput.upper() in ["Y", "YES"]:
+                break
+            else:
+                raise "SAY YES"
         except Exception:
-            print("ERROR LOOP")
-            continue
-
-        if startInput.upper() in ["Y","YES"]:
-            break
-        else:
-            print("ERROR LOOP")
+            TTSAndPrint("ERROR LOOP")
             continue
 
     SelectTopic()
     SelectSides()
     SendPresetPrompts()
+    TTSAndPrint("Let's get started")
     PromptLoop()
 
 def SelectTopic():
@@ -52,10 +53,10 @@ def SelectTopic():
     while True:
         try:
             topicCounter = 0
+            TTSAndPrint("Please choose a topic! (Choose a number from '1' to '3'!)")
             for topic in topics:
                 topicCounter += 1
-                print(f"{topicCounter}.{topic}")
-            print("Please choose a topic! (Choose a number from '1' to '3'!)")
+                TTSAndPrint(f"{topicCounter}.{topic}")
 
             try:
                 chosenTopic = SpeechRecognition()
@@ -64,18 +65,19 @@ def SelectTopic():
                 chosenTopic = ConvertSelectionToInt(chosenTopic)
 
             chosenTopic-=1
-            print(f"Chosen topic : {topics[chosenTopic]}")
+            TTSAndPrint(f"Chosen topic : {topics[chosenTopic]}")
             bardPresetPrompts.append(f"The topic for the debate is '{topics[chosenTopic]}'")
             break
         except Exception as e:
             print(e)
-            print("ERROR LOOP")
+            TTSAndPrint("ERROR LOOP")
             continue
 
 def SelectSides():
     ''' select which side are you on'''
     while True:
-        print("""1. In favor of / pro
+        TTSAndPrint("Please choose your stance")
+        TTSAndPrint("""1. In favor of / pro
 2. Against / con
 3. Random (selected by system)""")
 
@@ -92,8 +94,8 @@ def SelectSides():
         elif userSide == 3:
             bardPresetPrompts.append(random.choice([f"I would be debating in favour of, and you will be debating against", f"I would be debating against, and you will be debating in favour of"]))
         else:
-            print("Please pick a number between 1 and 3!")
-            print("ERROR LOOP")
+            TTSAndPrint("Please pick a number between 1 and 3!")
+            TTSAndPrint("ERROR LOOP")
             continue
         break
 
@@ -106,7 +108,7 @@ def SendPresetPrompts():
 def PromptLoop():
     while True:
         userInput = SpeechRecognition()
-        print(f"Bard Input: {bard.get_answer(userInput)['content']}")
+        TTSAndPrint(f"Bard Input: {bard.get_answer(userInput)['content']}")
 
 def SpeechRecognition():
     r = sr.Recognizer()
@@ -124,9 +126,9 @@ def SpeechRecognition():
             return r.recognize_google(audio)
             break
         except sr.UnknownValueError:
-            print("Google Speech Recognition could not understand audio")
-            print("ERROR LOOP")
-            continue
+            TTSAndPrint("Google Speech Recognition could not understand audio")
+            TTSAndPrint("ERROR LOOP")
+            break
         except sr.RequestError as e:
             raise ("Could not request results from Google Speech Recognition service; {0}".format(e))
 
@@ -142,6 +144,11 @@ def ConvertSelectionToInt(selection):
     else:
         print(selection)
         return "Please pick a number between 1 and 3!"
+
+def TTSAndPrint(string):
+    print(string)
+    engine.say(string)
+    engine.runAndWait()
 
 if __name__ == "__main__":
     Setup()
