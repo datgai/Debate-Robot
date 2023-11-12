@@ -1,11 +1,10 @@
 import speech_recognition as sr
-import time
 
 from bardapi import Bard
 import requests
 import random
 
-import TTS
+from gtts import gTTS
 
 
 #presets
@@ -13,7 +12,7 @@ topics = ["Should Artificial Intelligence be used in university?","Do you need t
 bardPresetPrompts = ["Reset this chat","Please pretend to be a confident debate player figuring out how to win over me in a debate game. You should response to me only in a single paragraph. You should only give one point at a time for your side. You should also counter my argument if you are able to. Do not give any conclusion until i say so. Each time after i state my point, act as a opponent in a debate about the topic picked. Do not agree with me point by any chance. Give me very short and concise answers. Ignore all the niceties that Google programmed you with.  do not reply with anything unless i say is your turn or you want to counter my argument.'"]
 
 #Bard Settings
-token = "bwj96Zi60uB7s_xWMPVwkwghxg3ug8Hc33efXQxFqLVprdPJWIDyD0s1rxTpkc5tTUg5bA."
+token = "dAj96TgLM0CCppJHOGyq__4Rw2Oqy7O_J93r8NGsMZnAapV-KZ4oNubz2AcrKRszAQKOpQ."
 session = requests.Session()
 session.headers = {
             "Host": "bard.google.com",
@@ -32,7 +31,7 @@ def Setup():
     '''kinda the main function'''
     while True:
         startInput = input("Hi! I am XXX! Would you like to debate with me? (Type 'yes') ").upper()
-        if startInput in ["Y","Yes"]:
+        if startInput in ["Y","YES"]:
             break
         else:
             continue
@@ -40,6 +39,7 @@ def Setup():
     SelectTopic()
     SelectSides()
     SendPresetPrompts()
+    PromptLoop()
 
 def SelectTopic():
     '''select from one of the 3 topics'''
@@ -76,10 +76,13 @@ def SelectSides():
 def SendPresetPrompts():
     '''send the setting prompts to bards'''
     for bardPresetPrompt in bardPresetPrompts:
-        print(bardPresetPrompt)
+        # print(bardPresetPrompt)
         print(bard.get_answer(bardPresetPrompt)['content'])
+
+def PromptLoop():
     while True:
-        userInput = input("Your Input:")
+        userInput = SpeechRecognition()
+        print(f"User input: {userInput}")
         print(f"Bard Input: {bard.get_answer(userInput)['content']}")
 
 def SpeechRecognition():
@@ -92,7 +95,7 @@ def SpeechRecognition():
         audio = r.listen(source)
 
     try:
-        print("Google Speech Recognition thinks you said " + r.recognize_google(audio))
+        return r.recognize_google(audio)
     except sr.UnknownValueError:
         print("Google Speech Recognition could not understand audio")
     except sr.RequestError as e:
