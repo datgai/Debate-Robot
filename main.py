@@ -4,8 +4,7 @@ from bardapi import Bard
 import requests
 import random
 
-from gtts import gTTS
-
+import pyttsx3
 
 #presets
 topics = ["Should Artificial Intelligence be used in university?","Do you need to have a college degree to get a good job?","Is technology making people less productive?"]

@@ -5,8 +5,8 @@ browser-cookie3==0.19.1
 cachetools==5.3.2
 certifi==2023.7.22
 charset-normalizer==3.3.2
-click==8.1.7
 colorama==0.4.6
+comtypes==1.2.0
 deep-translator==1.11.4
 google-api-core==2.14.0
 google-auth==2.23.4
@@ -15,7 +15,6 @@ google-cloud-translate==3.12.1
 googleapis-common-protos==1.61.0
 grpcio==1.59.2
 grpcio-status==1.59.2
-gTTS==2.4.0
 h11==0.14.0
 h2==4.1.0
 hpack==4.0.0
@@ -31,6 +30,9 @@ pyasn1==0.5.0
 pyasn1-modules==0.3.0
 PyAudio==0.2.14
 pycryptodomex==3.19.0
+pypiwin32==223
+pyttsx3==2.90
+pywin32==306
 requests==2.31.0
 rsa==4.9
 six==1.16.0
