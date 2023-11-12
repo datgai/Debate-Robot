@@ -13,12 +13,13 @@ with sr.Microphone() as source:
 
     start = time.time()
     print("Calculating...")
+
     # try:
     #     print("Whisper thinks you said " + r.recognize_whisper(audio, language="english"))
     # except sr.UnknownValueError:
-    #     print("Whisper could not understand audio")
+    #      print("Whisper could not understand audio")
     # except sr.RequestError as e:
-    #     print("Could not request results from Whisper")
+    #      print("Could not request results from Whisper")
 
     try:
         # for testing purposes, we're just using the default API key

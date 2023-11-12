@@ -1,6 +1,12 @@
+import speech_recognition as sr
+import time
+
 from bardapi import Bard
 import requests
 import random
+
+import TTS
+
 
 #presets
 topics = ["Should Artificial Intelligence be used in university?","Do you need to have a college degree to get a good job?","Is technology making people less productive?"]
@@ -18,10 +24,12 @@ session.headers = {
             "Referer": "https://bard.google.com/",
         }
 
+
 session.cookies.set("__Secure-1PSID", token)
 bard = Bard(token=token, session=session, timeout=30)
 
 def Setup():
+    '''kinda the main function'''
     while True:
         startInput = input("Hi! I am XXX! Would you like to debate with me? (Type 'yes') ").upper()
         if startInput in ["Y","Yes"]:
@@ -34,6 +42,7 @@ def Setup():
     SendPresetPrompts()
 
 def SelectTopic():
+    '''select from one of the 3 topics'''
     topicCounter = 0
     for topic in topics:
         topicCounter += 1
@@ -44,6 +53,7 @@ def SelectTopic():
     bardPresetPrompts.append(f"The topic for the debate is '{topics[chosenTopic]}'")
 
 def SelectSides():
+    ''' select which side are you on'''
     while True:
         try:
             userSide = int(input("""1. In favor of / pro
@@ -64,12 +74,30 @@ def SelectSides():
             continue
 
 def SendPresetPrompts():
+    '''send the setting prompts to bards'''
     for bardPresetPrompt in bardPresetPrompts:
         print(bardPresetPrompt)
         print(bard.get_answer(bardPresetPrompt)['content'])
     while True:
         userInput = input("Your Input:")
         print(f"Bard Input: {bard.get_answer(userInput)['content']}")
+
+def SpeechRecognition():
+    r = sr.Recognizer()
+    r.energy_threshold = 100
+
+    with sr.Microphone() as source:
+        print("Say something!")
+        r.adjust_for_ambient_noise(source)
+        audio = r.listen(source)
+
+    try:
+        print("Google Speech Recognition thinks you said " + r.recognize_google(audio))
+    except sr.UnknownValueError:
+        print("Google Speech Recognition could not understand audio")
+    except sr.RequestError as e:
+        print("Could not request results from Google Speech Recognition service; {0}".format(e))
+
 
 if __name__ == "__main__":
     Setup()
