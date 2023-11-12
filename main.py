@@ -30,8 +30,13 @@ bard = Bard(token=token, session=session, timeout=30)
 def Setup():
     '''kinda the main function'''
     while True:
-        startInput = input("Hi! I am XXX! Would you like to debate with me? (Type 'yes') ").upper()
-        if startInput in ["Y","YES"]:
+        print("Hi! I am XXX! Would you like to debate with me? (Type 'yes') ")
+        try:
+            startInput = SpeechRecognition()
+        except Exception:
+            continue
+
+        if startInput.upper() in ["Y","YES"]:
             break
         else:
             continue
@@ -43,64 +48,91 @@ def Setup():
 
 def SelectTopic():
     '''select from one of the 3 topics'''
-    topicCounter = 0
-    for topic in topics:
-        topicCounter += 1
-        print(f"{topicCounter}.{topic}")
-    chosenTopic = int(input("Please choose a topic! (1,3) "))
-    chosenTopic-=1
-    print(f"Chosen topic : {topics[chosenTopic]}")
-    bardPresetPrompts.append(f"The topic for the debate is '{topics[chosenTopic]}'")
+    while True:
+        try:
+            topicCounter = 0
+            for topic in topics:
+                topicCounter += 1
+                print(f"{topicCounter}.{topic}")
+            print("Please choose a topic! (Choose a number from '1' to '3'!)")
+
+            try:
+                chosenTopic = SpeechRecognition()
+                int(chosenTopic)
+            except Exception:
+                chosenTopic = ConvertSelectionToInt(chosenTopic)
+
+            chosenTopic-=1
+            print(f"Chosen topic : {topics[chosenTopic]}")
+            bardPresetPrompts.append(f"The topic for the debate is '{topics[chosenTopic]}'")
+            break
+        except Exception as e:
+            print(e)
+            continue
 
 def SelectSides():
     ''' select which side are you on'''
     while True:
-        try:
-            userSide = int(input("""1. In favor of / pro
+        print("""1. In favor of / pro
 2. Against / con
-3. Random (selected by system)"""))
-            if userSide == 1:
-                bardPresetPrompts.append(f"I would be debating in favour of, and you will be debating against")
-            elif userSide == 2:
-                bardPresetPrompts.append(f"I would be debating against, and you will be debating in favour of")
-            elif userSide == 3:
-                bardPresetPrompts.append(
-                    random.choice([f"I would be debating in favour of, and you will be debating against", f"I would be debating against, and you will be debating in favour of"]))
-            else:
-                print("Please pick a number between 1 and 3!")
-                continue
-            break
-        except ValueError:
+3. Random (selected by system)""")
+
+        try:
+            userSide = SpeechRecognition()
+            int(userSide)
+        except Exception:
+            userSide = ConvertSelectionToInt(userSide)
+
+        if userSide == 1:
+            bardPresetPrompts.append(f"I would be debating in favour of, and you will be debating against")
+        elif userSide == 2:
+            bardPresetPrompts.append(f"I would be debating against, and you will be debating in favour of")
+        elif userSide == 3:
+            bardPresetPrompts.append(random.choice([f"I would be debating in favour of, and you will be debating against", f"I would be debating against, and you will be debating in favour of"]))
+        else:
+            print("Please pick a number between 1 and 3!")
             continue
+        break
 
 def SendPresetPrompts():
     '''send the setting prompts to bards'''
     for bardPresetPrompt in bardPresetPrompts:
-        # print(bardPresetPrompt)
+        print(bardPresetPrompt)
         print(bard.get_answer(bardPresetPrompt)['content'])
 
 def PromptLoop():
     while True:
         userInput = SpeechRecognition()
-        print(f"User input: {userInput}")
         print(f"Bard Input: {bard.get_answer(userInput)['content']}")
 
 def SpeechRecognition():
     r = sr.Recognizer()
-    r.energy_threshold = 100
+    r.energy_threshold = 1500
 
     with sr.Microphone() as source:
+        #r.adjust_for_ambient_noise(source)
         print("Say something!")
-        r.adjust_for_ambient_noise(source)
         audio = r.listen(source)
 
     try:
+        print(f"User input: {r.recognize_google(audio)}")
         return r.recognize_google(audio)
     except sr.UnknownValueError:
-        print("Google Speech Recognition could not understand audio")
+        raise ("Google Speech Recognition could not understand audio")
     except sr.RequestError as e:
-        print("Could not request results from Google Speech Recognition service; {0}".format(e))
+        raise ("Could not request results from Google Speech Recognition service; {0}".format(e))
 
+def ConvertSelectionToInt(selection):
+    '''helper function to convert to int'''
+    if 'one' in selection:
+        return 1
+    elif 'two' in selection:
+        return 2
+    elif 'three' in selection:
+        return 3
+    else:
+        print(selection)
+        return "Please pick a number between 1 and 3!"
 
 if __name__ == "__main__":
     Setup()
