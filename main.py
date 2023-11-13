@@ -146,6 +146,7 @@ def ConvertSelectionToInt(selection):
         return "Please pick a number between 1 and 3!"
 
 def TTSAndPrint(string):
+    '''helper function that does text to speech and printing into the console'''
     print(string)
     engine.say(string)
     engine.runAndWait()
