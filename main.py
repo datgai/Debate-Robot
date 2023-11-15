@@ -4,6 +4,7 @@ from bardapi import Bard
 import requests
 import random
 
+import sounddevice
 import pyttsx3
 
 #presets
